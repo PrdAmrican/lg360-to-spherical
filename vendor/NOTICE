@@ -1,0 +1,10 @@
+This project bundles the "spatialmedia" Python package from Google's
+spatial-media project (https://github.com/google/spatial-media). It is used to
+inject Spherical Video (360) metadata into MP4/MOV files so that players render
+them in spherical/360 mode.
+
+    Copyright 2016 Google Inc.
+    Licensed under the Apache License, Version 2.0.
+
+The full license text is included in vendor/spatialmedia/LICENSE.
+The vendored source is used as-is.

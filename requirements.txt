@@ -1,0 +1,6 @@
+# Runtime dependencies
+imageio-ffmpeg>=0.4.9    # bundles a static ffmpeg binary (provides the v360 filter)
+tkinterdnd2>=0.3.0       # drag-and-drop for Tkinter (optional: Browse still works without it)
+
+# Optional, only needed to build a standalone .exe (see build/app.spec):
+# pyinstaller>=6.0

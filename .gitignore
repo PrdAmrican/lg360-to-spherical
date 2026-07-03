@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# PyInstaller
+dist/
+.pyi-build/
+
+# Local scratch / test artifacts
+*_360.mp4
+lg360_equirect_*.mp4
