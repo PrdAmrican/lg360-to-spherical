@@ -1,5 +1,8 @@
 # LG 360 CAM → Spherical 360 Video Converter
 
+Note from author:  
+This is for all of you out there who purchased an LG 360 Cam only to be adandoned by LG.  While there are a few not-so-easy to use solutions pit there, I got frustrated with not being able to use the video's as intended.  This app solves that.  If you find this useful, drop me a line at prdamrican@gmail.com.
+
 A small Windows desktop app (drag-and-drop) that turns footage from an
 **LG 360 CAM** into a spherical **360 video** that VLC, YouTube, Facebook and VR
 headsets recognize and let you look around in.
