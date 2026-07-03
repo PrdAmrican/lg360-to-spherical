@@ -19,8 +19,8 @@ This app does both, and lets you pick per video.
 
 ## Requirements
 
-These apply only when **running from source** or rebuilding — the packaged app
-in `dist/LG360Spherical/` bundles everything and needs nothing installed.
+These apply only when **running from source** or rebuilding — the packaged
+release download bundles everything and needs nothing installed.
 
 - **Python 3.9+** (developed/tested on 3.14) with Tkinter (included in the
   official python.org Windows installer).
@@ -32,19 +32,23 @@ in `dist/LG360Spherical/` bundles everything and needs nothing installed.
 
 There are two ways to run it.
 
-### Option A — Packaged Windows app (no Python needed)
+### Option A — Download the release (no Python needed)
 
-A self-contained build is placed in `dist/LG360Spherical/` (if that folder isn't
-there, build it with the steps in **Build the standalone .exe** below).
-Double-click:
+1. Open the [**Releases**](https://github.com/PrdAmrican/lg360-to-spherical/releases/latest)
+   page and download `LG360Spherical-vX.Y.Z-win64.zip` (v1.0.0 or later).
+2. Extract the zip anywhere.
+3. Run `LG360Spherical\LG360Spherical.exe`.
 
-```
-dist\LG360Spherical\LG360Spherical.exe
-```
+Keep the `_internal/` folder next to the exe (it holds the bundled ffmpeg and
+Python runtime) — don't move the exe out on its own. Everything is bundled, so
+no Python or ffmpeg install is required.
 
-Keep the `_internal/` folder beside the exe (it holds the bundled ffmpeg and
-Python runtime). To move or share the app, copy or zip the **entire**
-`dist/LG360Spherical/` folder — the exe will not run on its own.
+> **Windows SmartScreen** may warn about an unrecognized app (the exe is
+> unsigned). Click **More info → Run anyway**, or right-click the zip →
+> **Properties → Unblock** before extracting.
+
+If you build the app yourself instead (see **Build the standalone .exe**), the
+same folder is produced in `dist/LG360Spherical/`.
 
 ### Option B — From source (Python 3.9+)
 
@@ -83,6 +87,37 @@ python -m app
 Open `NAME_360.mp4` in **VLC 3+** — you should be able to click-and-drag to look
 around. Uploading to YouTube will also show the 360 navigation controls after
 processing.
+
+## Examples
+
+**Example 1 — Raw SD-card clip (dual-fisheye → 360).** You copied `LGE_0007.mp4`
+off the camera and it shows two side-by-side circles in VLC.
+1. Drag `LGE_0007.mp4` onto the app.
+2. Leave the mode on **Reproject dual-fisheye → equirectangular…**.
+3. Click **Convert** → you get `LGE_0007_360.mp4`, which pans around in VLC and
+   plays as 360 on YouTube.
+
+**Example 2 — Already-stitched clip that won't play as 360.** Your file is
+already a 2:1 equirectangular video but players treat it as flat.
+1. Drag the file in and choose **Add 360 metadata only**.
+2. Click **Convert** → the `_360.mp4` copy is created almost instantly (no
+   re-encode, no quality loss) with the spherical metadata added.
+
+**Example 3 — Smaller output / faster encode.** Open **Advanced options**, raise
+**CRF** to `23`–`28` (smaller file) and/or pick **HEVC (libx265)**, then Convert
+as usual.
+
+**Example 4 — Verify without the GUI (command line):**
+
+```powershell
+# packaged release (run from the extracted folder)
+$env:LG360_SELFTEST_REPORT = "$PWD\selftest.txt"
+.\LG360Spherical\LG360Spherical.exe --selftest ; Get-Content $env:LG360_SELFTEST_REPORT
+
+# from source
+python run_app.py --selftest
+python run_app.py --version
+```
 
 ## How it works
 
@@ -149,6 +184,40 @@ python -m PyInstaller --clean --noconfirm --workpath .pyi-build --distpath dist 
 The result (with ffmpeg bundled) is written to `dist/LG360Spherical/`, with
 support files in its `_internal/` subfolder. `dist/` is git-ignored, so the
 build itself is not committed.
+
+## Troubleshooting
+
+**The video still plays flat (not 360).** Make sure you're opening the converted
+`_360.mp4`, not the original. Use **VLC 3.0+** (older versions have no 360
+support); on YouTube, allow a few minutes after upload for 360 processing.
+
+**The 360 view is warped, or two fisheye circles are wrapped onto the sphere.**
+You used **Add 360 metadata only** on raw dual-fisheye footage. Re-run with
+**Reproject dual-fisheye → equirectangular** instead.
+
+**Visible seam, or the horizon looks doubled/stretched.** Adjust **Input FOV**
+in Advanced options — try `180`–`200` (default `189`). Lower reduces overlap;
+higher fills more of the sphere.
+
+**The "Reproject…" mode is disabled / "v360 unavailable".** The detected ffmpeg
+lacks the `v360` filter. Use the **release download** (ffmpeg bundled), or
+install a full ffmpeg on your `PATH`. From source, `python -m pip install -r
+requirements.txt` provides ffmpeg via `imageio-ffmpeg`.
+
+**Windows SmartScreen / "Windows protected your PC".** The exe isn't
+code-signed. Click **More info → Run anyway**, or **Unblock** the zip in its
+file **Properties** before extracting.
+
+**The app won't start / closes immediately.** Keep the exe and its `_internal/`
+folder together — the exe copied out on its own will not run. Re-extract the
+full zip if unsure.
+
+**Audio is missing or not surround.** Audio is stream-copied when it's AAC (the
+LG default) and otherwise re-encoded to AAC; a source with no audio produces no
+audio.
+
+**The output file is very large.** Reprojection re-encodes video — raise **CRF**
+(e.g. `23`–`28`) and/or choose **HEVC** in Advanced options to shrink it.
 
 ## Notes & limitations
 
